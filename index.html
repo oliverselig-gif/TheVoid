@@ -1,0 +1,435 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>THE VOIDE — Casual Game Crew</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Barlow+Condensed:wght@400;500;700;800;900&family=Space+Grotesk:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  @font-face{
+    font-family:'Dirtyline';
+    src: url('assets/fonts/Dirtyline.woff2') format('woff2'),
+         url('assets/fonts/Dirtyline.woff') format('woff'),
+         url('assets/fonts/Dirtyline.ttf') format('truetype');
+    font-style:normal;font-weight:400;font-display:swap;
+  }
+  :root{
+    --red:        #fc3e37;
+    --red-deep:   #c8281f;
+    --red-blood:  #7a1812;
+    --teal:       #257488;
+    --teal-deep:  #143942;
+    --void:       #0a0a0a;
+    --bone:       #f4ecd8;
+    --bone-dim:   #d8cfb8;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--void);color:var(--bone);font-family:'Space Grotesk',system-ui,sans-serif;font-weight:300;line-height:1.5;-webkit-font-smoothing:antialiased}
+  ::selection{background:var(--red);color:var(--void)}
+  img{display:block;max-width:100%}
+  a{color:inherit;text-decoration:none}
+
+  /* --- type system --- */
+  .display{font-family:'Dirtyline','Big Shoulders Display',sans-serif;font-weight:400;letter-spacing:.01em;line-height:.85}
+  .head{font-family:'Big Shoulders Display',sans-serif;font-weight:900;letter-spacing:-.005em;line-height:.92;text-transform:uppercase;font-stretch:condensed}
+  .mono{font-family:'JetBrains Mono',monospace;font-weight:400;letter-spacing:.04em;text-transform:uppercase;font-size:11px}
+  .eyebrow{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.3em;text-transform:uppercase;opacity:.7}
+
+  /* --- top bar --- */
+  .nav{
+    position:fixed;top:0;left:0;right:0;z-index:50;
+    display:flex;justify-content:space-between;align-items:center;
+    padding:22px 32px;
+    mix-blend-mode:difference;color:#fff;
+    font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.25em;text-transform:uppercase;
+  }
+  .nav .brand{font-family:'Big Shoulders Display',sans-serif;font-weight:900;font-size:22px;letter-spacing:-.01em;text-transform:uppercase;line-height:1}
+  .nav ul{display:flex;gap:28px;list-style:none}
+  .nav a:hover{color:var(--red)}
+
+  /* --- HERO --- */
+  .hero{
+    position:relative;height:100vh;min-height:720px;overflow:hidden;
+    background:var(--red);
+  }
+  .hero img{
+    position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 40%;
+    filter:saturate(1.08) contrast(1.02);
+    -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 72%, transparent 100%);
+            mask-image: linear-gradient(180deg, #000 0%, #000 72%, transparent 100%);
+  }
+  .hero::after{
+    content:"";position:absolute;inset:0;
+    background:
+      linear-gradient(180deg, rgba(10,10,10,.45) 0%, rgba(10,10,10,.15) 12%, transparent 28%);
+    pointer-events:none;
+  }
+  .hero-content{
+    position:absolute;inset:0;z-index:2;
+    display:flex;flex-direction:column;justify-content:space-between;
+    padding:96px 48px 32px;
+  }
+  .hero-tag{
+    font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.4em;text-transform:uppercase;
+    color:#fff;display:flex;align-items:center;gap:14px;
+  }
+  .hero-tag .dot{width:8px;height:8px;background:var(--red);border-radius:50%;box-shadow:0 0 16px var(--red)}
+  .hero-stack{display:flex;flex-direction:column;align-items:flex-start;gap:14px}
+  .hero-mark{
+    font-family:'Big Shoulders Display',sans-serif;font-weight:900;
+    font-size: clamp(112px, 23vw, 420px);
+    color:#fff;line-height:.82;letter-spacing:-.025em;text-transform:uppercase;
+    text-shadow:0 4px 60px rgba(0,0,0,.4);
+    margin:0;
+  }
+  .hero-sub{
+    font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.42em;text-transform:uppercase;
+    color:rgba(255,255,255,.92);
+    display:flex;align-items:center;gap:14px;
+    padding-left:4px;
+  }
+  .hero-sub::before{content:"";display:block;width:42px;height:1px;background:var(--red)}
+  .hero-foot{
+    display:flex;justify-content:space-between;align-items:flex-end;
+    color:#fff;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.25em;text-transform:uppercase;
+  }
+  .hero-foot .col{max-width:280px}
+  .hero-foot .label{opacity:.55;display:block;margin-bottom:6px}
+  .hero-foot .scroll{display:flex;align-items:center;gap:10px}
+  .scroll-bar{width:1px;height:48px;background:#fff;opacity:.7;position:relative;overflow:hidden}
+  .scroll-bar::after{content:"";position:absolute;left:0;right:0;top:-50%;height:50%;background:var(--red);animation:scrollPulse 2.4s linear infinite}
+  @keyframes scrollPulse{to{top:100%}}
+
+  /* --- generic section --- */
+  section{padding:96px 48px;position:relative}
+  .container{max-width:1280px;margin:0 auto}
+  .row{display:grid;grid-template-columns:1.2fr 1fr;gap:64px;align-items:start}
+
+  /* --- TRANSMISSION / red panel --- */
+  .transmission{background:var(--red);color:var(--void);padding-top:120px;padding-bottom:140px;overflow:hidden}
+  .transmission .eyebrow{color:var(--void);opacity:.7}
+  .transmission h2{
+    font-family:'Big Shoulders Display',sans-serif;font-weight:900;
+    font-size: clamp(64px, 9.5vw, 168px);
+    color:var(--void);line-height:.86;letter-spacing:-.025em;
+    margin: 18px 0 36px;text-transform:uppercase;
+  }
+  .transmission .lead{
+    font-family:'Barlow Condensed',sans-serif;font-weight:500;
+    font-size: clamp(20px, 1.8vw, 26px);line-height:1.25;
+    color:var(--void);max-width:560px;margin-bottom:24px;
+  }
+  .transmission p{font-size:15px;color:var(--red-blood);max-width:520px;margin-bottom:14px;line-height:1.55}
+  .transmission .side{
+    border-left:1px solid rgba(10,10,10,.25);
+    padding-left:32px;
+    font-family:'JetBrains Mono',monospace;font-size:12px;text-transform:uppercase;letter-spacing:.12em;
+    color:var(--void);
+  }
+  .transmission .side dt{opacity:.6;margin-bottom:4px}
+  .transmission .side dd{margin-bottom:18px;font-size:15px;font-family:'Big Shoulders Display',sans-serif;font-weight:800;letter-spacing:0;text-transform:uppercase;line-height:1.15}
+  .scroll-ticker{
+    position:absolute;left:0;right:0;bottom:-24px;
+    font-family:'Big Shoulders Display',sans-serif;font-weight:900;font-size:240px;color:rgba(10,10,10,.08);text-transform:uppercase;letter-spacing:-.04em;
+    white-space:nowrap;letter-spacing:.04em;pointer-events:none;
+    user-select:none;line-height:1;
+  }
+
+  /* --- LOGBOOK chapters --- */
+  .logbook{background:var(--void);color:var(--bone)}
+  .logbook .heading{
+    font-family:'Big Shoulders Display',sans-serif;font-weight:900;font-size:clamp(56px,8vw,140px);line-height:.9;letter-spacing:-.025em;text-transform:uppercase;
+    color:var(--bone);margin:18px 0 56px;
+  }
+  .logbook .heading em{color:var(--red);font-style:normal}
+  .chapters{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:#1a1a1a;border:1px solid #1a1a1a}
+  .chapter{background:var(--void);padding:36px 28px;min-height:340px;display:flex;flex-direction:column;justify-content:space-between;position:relative;transition:background .3s}
+  .chapter:hover{background:#0f0f0f}
+  .chapter:hover .ch-num{color:var(--red)}
+  .ch-num{font-family:'Big Shoulders Display',sans-serif;font-weight:900;font-size:88px;color:#2a2a2a;line-height:1;letter-spacing:-.04em;transition:color .3s}
+  .ch-title{font-family:'Big Shoulders Display',sans-serif;font-weight:900;font-size:28px;line-height:1;text-transform:uppercase;letter-spacing:-.015em;margin-top:auto;margin-bottom:12px}
+  .ch-body{font-size:14px;color:var(--bone-dim);line-height:1.55}
+  .ch-tag{position:absolute;top:36px;right:36px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.2em;color:var(--red);text-transform:uppercase}
+
+  /* --- crew strip --- */
+  .crew{background:var(--teal-deep);color:var(--bone);padding:112px 0}
+  .crew .container{padding:0 48px}
+  .crew h2{font-family:'Big Shoulders Display',sans-serif;font-weight:900;font-size:clamp(64px,9vw,160px);line-height:.88;letter-spacing:-.025em;text-transform:uppercase;margin:18px 0 12px}
+  .crew .lede{font-family:'Barlow Condensed',sans-serif;font-size:21px;font-weight:400;max-width:560px;color:var(--bone);margin-bottom:48px;line-height:1.3}
+  .roster{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+  .pilot{
+    aspect-ratio:3/4;
+    background:linear-gradient(180deg, var(--teal) 0%, var(--teal-deep) 100%);
+    border:1px solid rgba(244,236,216,.15);
+    padding:24px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden;
+  }
+  .pilot::before{
+    content:"";position:absolute;inset:0;
+    background:
+      repeating-linear-gradient(45deg, transparent 0 14px, rgba(244,236,216,.04) 14px 15px);
+    pointer-events:none;
+  }
+  .pilot .id{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--red);}
+  .pilot .name{font-family:'Big Shoulders Display',sans-serif;font-weight:900;font-size:30px;text-transform:uppercase;line-height:.95;letter-spacing:-.015em}
+  .pilot .role{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--bone-dim);margin-top:6px}
+  .pilot .sign{position:absolute;top:24px;right:24px;width:36px;height:36px;border:1px solid rgba(244,236,216,.25);border-radius:50%;display:grid;place-items:center;font-family:'Big Shoulders Display',sans-serif;font-weight:900;font-size:16px;line-height:1}
+
+  /* --- ledger / numbers --- */
+  .ledger{background:var(--red);color:var(--void);padding:72px 48px;border-top:1px solid rgba(10,10,10,.15)}
+  .ledger-grid{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:32px}
+  .stat .n{font-family:'Big Shoulders Display',sans-serif;font-weight:900;font-size:clamp(56px,7vw,112px);line-height:.9;letter-spacing:-.03em;display:block;margin-bottom:6px}
+  .stat .l{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.25em;text-transform:uppercase}
+
+  /* --- hailing / CTA --- */
+  .hail{background:var(--void);padding:128px 48px;position:relative;overflow:hidden}
+  .hail::before{
+    content:"";position:absolute;inset:0;
+    background:radial-gradient(circle at 70% 50%, rgba(252,62,55,.18) 0%, transparent 50%);
+    pointer-events:none;
+  }
+  .hail .container{position:relative;text-align:center}
+  .hail h2{font-family:'Big Shoulders Display',sans-serif;font-weight:900;font-size:clamp(80px,13vw,240px);line-height:.85;letter-spacing:-.025em;margin-bottom:24px;text-transform:uppercase}
+  .hail h2 em{color:var(--red);font-style:normal}
+  .hail p{font-family:'Barlow Condensed',sans-serif;font-size:22px;max-width:540px;margin:0 auto 40px;color:var(--bone-dim);line-height:1.35}
+  .cta-row{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+  .btn{
+    display:inline-flex;align-items:center;gap:12px;
+    padding:18px 28px;border:1px solid var(--red);background:transparent;color:var(--bone);
+    font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.25em;text-transform:uppercase;
+    cursor:pointer;transition:all .2s;
+  }
+  .btn:hover{background:var(--red);color:var(--void)}
+  .btn.primary{background:var(--red);color:var(--void)}
+  .btn.primary:hover{background:var(--bone);border-color:var(--bone)}
+  .btn .arrow{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:500}
+
+  /* --- footer --- */
+  footer{background:#000;padding:48px;color:#555;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px;border-top:1px solid #1a1a1a}
+  footer .brand{font-family:'Big Shoulders Display',sans-serif;font-weight:900;font-size:22px;letter-spacing:-.01em;color:var(--red);text-transform:uppercase;line-height:1}
+
+  /* --- responsive --- */
+  @media (max-width: 900px){
+    .row{grid-template-columns:1fr;gap:48px}
+    .chapters{grid-template-columns:1fr}
+    .roster{grid-template-columns:repeat(2,1fr)}
+    .ledger-grid{grid-template-columns:repeat(2,1fr);gap:32px}
+    section{padding:80px 24px}
+    .nav{padding:18px 20px}
+    .nav ul{display:none}
+    .hero-content{padding:90px 24px 24px}
+    .hero-foot .col{display:none}
+    .hero-foot .col.show-mobile{display:block}
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="brand">The Voide</div>
+  <ul>
+    <li><a href="#manifest">Manifest</a></li>
+    <li><a href="#logbook">Logbook</a></li>
+    <li><a href="#crew">Crew</a></li>
+    <li><a href="#hail">Hail Us</a></li>
+  </ul>
+  <div>EST. 2954 — UEE</div>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <img src="assets/hero.png" alt="A red-armoured pilot kneeling on a crimson dune, an event-horizon ring hanging in the teal sky behind them." />
+  <div class="hero-content">
+    <div class="hero-tag">
+      <span class="dot"></span>
+      <span>Transmission // Casual Crew // Star Citizen</span>
+    </div>
+    <div class="hero-stack">
+      <h1 class="hero-mark">The Voide</h1>
+      <div class="hero-sub">A Casual Game Crew · Star Citizen · Est. 2954</div>
+    </div>
+    <div class="hero-foot">
+      <div class="col">
+        <span class="label">Coordinates</span>
+        Somewhere past Stanton.<br/>The dunes are red. The sky is wrong.
+      </div>
+      <div class="col show-mobile" style="text-align:center">
+        <span class="label">Status</span>
+        Open Recruit
+      </div>
+      <div class="col" style="text-align:right">
+        <span class="label">Scroll for the long version</span>
+        <div class="scroll" style="justify-content:flex-end">
+          <span>↓</span>
+          <div class="scroll-bar"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- TRANSMISSION — red story panel -->
+<section class="transmission" id="manifest">
+  <div class="container">
+    <div class="row">
+      <div>
+        <div class="eyebrow">Chapter 01 — The Manifest</div>
+        <h2>We fell into<br/>the void.<br/>On purpose.</h2>
+        <p class="lead">The Voide isn't a fleet. It isn't a guild. It's a handful of pilots who showed up for the wrong jump point at the right time and decided to keep flying.</p>
+        <p>No rank board. No mandatory ops. No spreadsheet of obligations. Just a frequency we leave open, a few good ships, and the quiet agreement that if anyone's flying tonight — somebody else probably is too.</p>
+        <p>The red planet on the front of this site is where we keep finding each other. Officially it has a designation. We've never used it.</p>
+      </div>
+      <aside class="side">
+        <dl>
+          <dt>Vessel of Record</dt>
+          <dd>The Long Way Round</dd>
+          <dt>Doctrine</dt>
+          <dd>Show up. Don't be a jerk. Bring snacks.</dd>
+          <dt>Time Zones</dt>
+          <dd>EU primary · NA secondary · always somebody awake</dd>
+          <dt>Headcount</dt>
+          <dd>Small enough to remember names.</dd>
+        </dl>
+      </aside>
+    </div>
+  </div>
+  <div class="scroll-ticker">VOIDE · VOIDE · VOIDE · VOIDE · VOIDE · VOIDE · VOIDE ·</div>
+</section>
+
+<!-- LOGBOOK — what we do -->
+<section class="logbook" id="logbook">
+  <div class="container">
+    <div class="eyebrow" style="color:var(--red)">Chapter 02 — The Logbook</div>
+    <h2 class="heading">What a typical<br/>night <em>looks like.</em></h2>
+    <div class="chapters">
+      <article class="chapter">
+        <div class="ch-num">01</div>
+        <span class="ch-tag">// Drift</span>
+        <div>
+          <h3 class="ch-title">Aimless Jumps</h3>
+          <p class="ch-body">Pick a jump point nobody picked tonight. Find a moon. Land on the wrong side of it. Argue about whether the wrong side is actually the right side.</p>
+        </div>
+      </article>
+      <article class="chapter">
+        <div class="ch-num">02</div>
+        <span class="ch-tag">// Haul</span>
+        <div>
+          <h3 class="ch-title">Honest Cargo Runs</h3>
+          <p class="ch-body">Sometimes we move boxes. Sometimes we move boxes that are slightly more interesting. We pay attention to the scan beam either way.</p>
+        </div>
+      </article>
+      <article class="chapter">
+        <div class="ch-num">03</div>
+        <span class="ch-tag">// Hunt</span>
+        <div>
+          <h3 class="ch-title">Quiet Bounties</h3>
+          <p class="ch-body">Low-stakes contracts. Three ships, one target, a coffee somewhere in the cockpit. We are not the heroes the verse needs. We are okay with this.</p>
+        </div>
+      </article>
+      <article class="chapter">
+        <div class="ch-num">04</div>
+        <span class="ch-tag">// Dig</span>
+        <div>
+          <h3 class="ch-title">Rocks &amp; Regrets</h3>
+          <p class="ch-body">Mining at 3am because somebody said quantanium and somebody else said sure. Often profitable. Always a story.</p>
+        </div>
+      </article>
+      <article class="chapter">
+        <div class="ch-num">05</div>
+        <span class="ch-tag">// Salvage</span>
+        <div>
+          <h3 class="ch-title">Picking the Bones</h3>
+          <p class="ch-body">Drag a hull home, peel it for hull plating, argue about who gets the cockpit chair. Therapy, but with a tractor beam.</p>
+        </div>
+      </article>
+      <article class="chapter">
+        <div class="ch-num">06</div>
+        <span class="ch-tag">// Vibe</span>
+        <div>
+          <h3 class="ch-title">Sitting On A Rock</h3>
+          <p class="ch-body">Climb the highest dune on the red planet. Park the ship. Watch the event horizon spin. Don't say much. This counts as content.</p>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- LEDGER — playful stats -->
+<section class="ledger">
+  <div class="ledger-grid">
+    <div class="stat"><span class="n">14</span><span class="l">Active Pilots</span></div>
+    <div class="stat"><span class="n">0</span><span class="l">Mandatory Ops/Wk</span></div>
+    <div class="stat"><span class="n">∞</span><span class="l">Bad Decisions Logged</span></div>
+    <div class="stat"><span class="n">03</span><span class="l">Carracks Lost To Friendly Fire</span></div>
+  </div>
+</section>
+
+<!-- CREW -->
+<section class="crew" id="crew">
+  <div class="container">
+    <div class="eyebrow" style="color:var(--red)">Chapter 03 — The Crew</div>
+    <h2>Names<br/>on the<br/>frequency.</h2>
+    <p class="lede">Not a rank chart. Just the handles you'll hear over comms most nights. Everyone here also makes their own coffee, organises their own loadout, and answers to nobody in particular.</p>
+    <div class="roster">
+      <div class="pilot">
+        <div class="sign">★</div>
+        <div>
+          <div class="id">// 001 — Founder</div>
+        </div>
+        <div>
+          <div class="name">Pangpow</div>
+          <div class="role">Wanderer · Wing One</div>
+        </div>
+      </div>
+      <div class="pilot">
+        <div class="sign">◊</div>
+        <div><div class="id">// 002 — Quartermaster</div></div>
+        <div>
+          <div class="name">Halberd</div>
+          <div class="role">Cargo · Logistics</div>
+        </div>
+      </div>
+      <div class="pilot">
+        <div class="sign">○</div>
+        <div><div class="id">// 003 — Lookout</div></div>
+        <div>
+          <div class="name">Mereya</div>
+          <div class="role">Scanning · Recon</div>
+        </div>
+      </div>
+      <div class="pilot">
+        <div class="sign">△</div>
+        <div><div class="id">// 004 — Wrencher</div></div>
+        <div>
+          <div class="name">Bo&shy;sun</div>
+          <div class="role">Engineering · Salvage</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HAIL -->
+<section class="hail" id="hail">
+  <div class="container">
+    <div class="eyebrow" style="color:var(--red)">Chapter 04 — Open Channel</div>
+    <h2>Come fly<br/><em>the long way.</em></h2>
+    <p>If a casual crew that takes the scenic route sounds like your kind of evening — hail us. We answer slow but we answer. Bring your ship. Bring snacks.</p>
+    <div class="cta-row">
+      <a href="#" class="btn primary">Open Channel <span class="arrow">→</span></a>
+      <a href="#" class="btn">RSI Org Page</a>
+      <a href="#" class="btn">Discord</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="brand">The Voide</div>
+  <div>A casual crew · Fan project · Not affiliated with CIG</div>
+  <div>// FREQ OPEN · 2954.05.14</div>
+</footer>
+
+</body>
+</html>
